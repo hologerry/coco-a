@@ -39,22 +39,18 @@ with open(ANN_FILE_PATH, 'r') as f:
     dataset = json.load(f)
 
 print("number of all annotation", len(dataset['annotations']))
-# number of all annotation 600963
 new_dataset = copy.deepcopy(dataset)
 
 new_dataset['annotations'] = []
 
-num_person_ann = 0
 for ann in dataset['annotations']:
-    if ann['category_id'] == 1:
-        new_dataset['annotations'].append(ann)
-        num_person_ann += 1
+    ann['category_id'] = 1
+    new_dataset['annotations'].append(ann)
 
-NEW_ANN_FILE_PATH = "{0}/instances_{1}.json".format(COCO_ANN_DIR,'train2014cocoa2')
+
+NEW_ANN_FILE_PATH = "{0}/instances_{1}.json".format(COCO_ANN_DIR,'train2014one')
 
 with open(NEW_ANN_FILE_PATH, 'w') as f:
     json.dump(new_dataset, f)
     print(f"saved new annotations file to {NEW_ANN_FILE_PATH}")
 
-print("number of person annotation", num_person_ann)
-# num_person_ann 185316

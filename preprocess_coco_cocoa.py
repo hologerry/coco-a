@@ -137,6 +137,9 @@ def interact_condition(x, image_id):
 
 all_image_ids = coco.getImgIds()
 
+
+updated_subject_num = 0
+
 new_image_id_to_anns = {}
 
 for idx, image_id in enumerate(all_image_ids):
@@ -191,12 +194,12 @@ for idx, image_id in enumerate(all_image_ids):
 
         new_subject_ann['segmentation'] = mask2polygon(m)
         new_subject_ann['area'] = float(maskUtils.area(rle))
-        print("new_subject_ann['area']", new_subject_ann['area'])
         assert type(new_subject_ann['area']) == float
+
         new_subject_ann['bbox'] = maskUtils.toBbox(rle).tolist()
-        print("new_subject_ann['bbox']", new_subject_ann['bbox'])
         assert type(new_subject_ann['bbox']) == list and len(new_subject_ann['bbox']) == 4
 
+        updated_subject_num += 1
         new_image_anns.append(new_subject_ann)
 
     new_image_id_to_anns[image_id] = new_image_anns
@@ -205,6 +208,7 @@ for idx, image_id in enumerate(all_image_ids):
         print(f"processed [{idx+1}/{len(all_image_ids)}]")
 
 
+print("number of updated ann", updated_subject_num)
 
 with open(ANN_FILE_PATH, 'r') as f:
     dataset = json.load(f)
@@ -213,7 +217,7 @@ dataset['annotations'] = []
 for k, v in new_image_id_to_anns.items():
     dataset['annotations'] += v
 
-NEW_ANN_FILE_PATH = "{0}/instances_{1}.json".format(COCO_ANN_DIR,'train2014')
+NEW_ANN_FILE_PATH = "{0}/instances_{1}.json".format(COCO_ANN_DIR,'train2014cocoa')
 
 with open(NEW_ANN_FILE_PATH, 'w') as f:
     json.dump(dataset, f)
